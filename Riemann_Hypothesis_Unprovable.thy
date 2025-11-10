@@ -24,7 +24,7 @@ Feinstein observes:
    
 2. "Because the formula for the real roots t of ζ(1/2 + it) cannot be 
    reduced to a formula that is simpler than the equation, ζ(1/2 + it) = 0, 
-   the only way to determine the number of real roots t of ζ(1/2+it) in 
+   the only way to determine the number of real roots t of ζ(1/2 + it) in 
    which 0 < t < T is to count the changes in sign of Z(t), where 0 < t < T."
 
 3. Counting sign changes requires verifying both positive and negative values,
@@ -115,18 +115,28 @@ WHY THIS FAILS FOR sin(x):
   the count.
 
 WHY THIS HOLDS FOR ζ(1/2 + it):
-  There is no simple formula for the zeros. To prove count_real_zeros T = n
-  requires verifying n sign changes, so proof length grows with n.
+  To prove count_real_zeros T = n DIRECTLY (by counting zeros of ζ(1/2 + it)),
+  you must verify n sign changes, so proof length grows with n.
   
-IMPORTANT SUBTLETY:
+IMPORTANT SUBTLETY - The apparent formula via RH:
   If RH is true, then count_real_zeros T = count_critical_strip_zeros T,
-  and the latter can be computed via argument principle. So there IS a formula!
+  and count_critical_strip_zeros T can be computed via the argument principle
+  and Riemann-von Mangoldt formula. So there IS a formula for the count!
   
-  But Feinstein's point is: to USE that formula as counting the zeros of
-  ζ(1/2 + it), you first need to PROVE that all zeros are on the critical line.
-  That's RH itself! So you can't use this formula to prove RH - it's circular.
+  But here's the key: that formula counts zeros in the CRITICAL STRIP (all
+  complex s with 0 < Re(s) < 1), not zeros of ζ(1/2 + it) for REAL t 
+  (equivalently, not sign changes of Z(t) for real t). 
   
-  The axiom is about proving counts DIRECTLY, not via first proving RH.
+  To use the argument principle count as a count of zeros of ζ(1/2 + it) 
+  for REAL t, you must first PROVE that all critical strip zeros lie on the 
+  critical line Re(s) = 1/2 - which is the RH itself!
+  
+  So you cannot use the argument principle formula to count zeros of ζ(1/2 + it)
+  for real t without first proving RH - that would be circular reasoning.
+  
+  The axiom is about proving count_real_zeros T = n DIRECTLY (by verifying sign
+  changes of Z(t) for real t), not via first proving RH and then using the 
+  argument principle.
 ›
 axiomatization
   where counting_requires_sign_changes:
@@ -134,21 +144,19 @@ axiomatization
      n ≤ sign_changes_verified (proof_length (count_real_zeros T = n))"
 
 text ‹
-SUMMARY: Why this argument works for ζ but not for sin:
+SUMMARY: Why Feinstein's unprovability argument works for ζ but not for sin:
 
-1. BOTH have infinitely many zeros (sign_changes_grows holds for both)
-2. BOTH are continuous
+Both ζ(1/2 + it) and sin(x) have infinitely many zeros and are continuous.
+The key difference is counting_requires_sign_changes:
+  - sin: FAILS (as explained above, x = nπ formula gives constant proof length)
+  - ζ(1/2 + it): SATISFIES (no direct formula, proof length grows with count)
 
-But they differ in counting_requires_sign_changes:
-  - sin: FAILS because zeros have formula x = nπ that directly gives the count
-    with constant proof length
-  - ζ(1/2 + it): SATISFIES because no direct formula exists - any counting
-    requires verifying sign changes, so proof length grows with count
-
-The argument: If RH is provable with proof length L, then for large enough T,
+THE UNPROVABILITY ARGUMENT (formalized in the theorem below):
+If RH is provable with proof length L, then for large enough T,
 count_real_zeros T > sign_changes_verified L. But proving this count requires
 length sufficient for that many sign changes. Yet the count should be derivable
-from RH with length ≤ L. This is impossible for large enough T.
+from RH with length ≤ L. This is impossible for large enough T, giving a
+contradiction.
 ›
 
 text ‹Main theorem: The Riemann Hypothesis is unprovable›
