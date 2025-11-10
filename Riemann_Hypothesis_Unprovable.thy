@@ -14,7 +14,7 @@ The Riemann Hypothesis (RH) states that all non-trivial zeros of the Riemann
 zeta function in the critical strip {s = σ + ti | 0 < σ < 1} lie on the 
 critical line {s = 1/2 + ti}.
 
-Equivalently, RH states that for all T > 0:
+Equivalently, the RH states that for all T > 0:
   (number of zeros on critical line in [0,T]) = 
   (total number of zeros in critical strip in [0,T])
 
@@ -88,89 +88,67 @@ axiomatization
 text ‹The function sign_changes_verified(L) represents how many sign changes 
   can be verified with a proof of length L.›
 axiomatization sign_changes_verified :: "nat ⇒ nat"
-  where 
-    sign_changes_bounded: 
-      "provable (count_real_zeros T = n) ⟹ 
-       n ≤ sign_changes_verified (proof_length (count_real_zeros T = n))"
+  where sign_changes_monotone:
+      "L1 ≤ L2 ⟹ sign_changes_verified L1 ≤ sign_changes_verified L2"
     and sign_changes_grows:
       "∀L. ∃T>0. count_real_zeros T > sign_changes_verified L"
-    and sign_changes_monotone:
-      "L1 ≤ L2 ⟹ sign_changes_verified L1 ≤ sign_changes_verified L2"
 
 text ‹
-EXPLANATION OF THE CRITICAL AXIOM sign_changes_bounded:
+CRITICAL AXIOM - Feinstein's key observation:
 
-This axiom states: If we can prove count_real_zeros T = n, then we must have 
-verified n sign changes, which requires a proof length sufficient for n verifications.
+This axiom captures: "the formula for the real roots t of ζ(1/2 + it) cannot 
+be reduced to a formula that is simpler than the equation, ζ(1/2 + it) = 0"
 
-Feinstein's key insight is NOT that there is no closed-form formula for the zeros,
-but rather that we CANNOT ACCESS OR USE such a formula in a proof without already
-proving RH.
+The axiom states: To prove that count_real_zeros T equals a specific number n,
+you must verify n sign changes, which bounds the proof length.
 
-As stated in the paper:
-  "the formula for the real roots t of ζ(1/2 + it) cannot be reduced to a 
-   formula that is simpler than the equation, ζ(1/2 + it) = 0"
+INTERPRETATION:
+- This axiom applies to the BASIC counting problem: proving count_real_zeros T = n
+- It doesn't matter whether RH is provable or not - this is about the fundamental
+  complexity of counting zeros
+- Even if RH is provable with short proof, extracting a specific numerical count
+  for a given T still requires work proportional to that count
 
-This means: we cannot REDUCE the problem to something simpler without first 
-proving the very thing we're trying to prove.
+WHY THIS FAILS FOR sin(x):
+  sin has formula x = nπ, so proving "count of zeros in [0,T] = ⌊T/π⌋" requires
+  only constant proof length (just cite the formula). The work doesn't grow with
+  the count.
 
-IMPORTANT: If RH is TRUE, then there IS a closed-form formula!
-  By the argument principle and the Riemann-von Mangoldt formula, the count of 
-  zeros of ζ(s) in the critical strip up to height T is approximately
-  N(T) = (T/2π)log(T/2π) - T/2π + O(log T)
+WHY THIS HOLDS FOR ζ(1/2 + it):
+  There is no simple formula for the zeros. To prove count_real_zeros T = n
+  requires verifying n sign changes, so proof length grows with n.
   
-  If RH is true, then ALL these zeros are on the critical line Re(s) = 1/2,
-  so count_real_zeros T = N(T) is a closed formula.
-
-BUT: To USE this formula in a proof, we must first PROVE that RH is true!
-This is circular - we cannot use the formula to prove RH.
-
-WHY sign_changes_bounded FAILS FOR sin(x):
-  - sin has explicit formula: zeros are x = nπ for integers n
-  - We can USE this formula WITHOUT proving anything first
-  - To count zeros in [0, T], just compute ⌊T/π⌋
-  - Proof length is CONSTANT, independent of the count
-  - Therefore, sin does NOT satisfy sign_changes_bounded
-
-WHY sign_changes_bounded HOLDS FOR ζ(1/2 + it):
-  - A closed formula EXISTS (conditionally on RH being true)
-  - But we CANNOT USE it without first proving RH
-  - So we must verify sign changes individually
-  - Proof length GROWS with the number of zeros
-  - Therefore, Z(t) DOES satisfy sign_changes_bounded
-
-This axiom encodes: "We cannot use a simpler counting method without begging
-the question (assuming what we're trying to prove)."
-
-EXPLANATION OF sign_changes_grows:
-The actual number of zeros of ζ(1/2 + it) grows without bound.
-This is known from analytic number theory: the number of zeros up to 
-height T grows roughly as (T/2π)log(T/2π).
-
-This property also holds for sin (infinitely many zeros), but the
-difference is that for sin we can COUNT them with a closed formula,
-while for ζ we cannot (without assuming RH).
-
-EXPLANATION OF sign_changes_monotone:
-Monotonicity: larger proof lengths allow more verifications.
-This is a natural property of any verification function.
+IMPORTANT SUBTLETY:
+  If RH is true, then count_real_zeros T = count_critical_strip_zeros T,
+  and the latter can be computed via argument principle. So there IS a formula!
+  
+  But Feinstein's point is: to USE that formula as counting the zeros of
+  ζ(1/2 + it), you first need to PROVE that all zeros are on the critical line.
+  That's RH itself! So you can't use this formula to prove RH - it's circular.
+  
+  The axiom is about proving counts DIRECTLY, not via first proving RH.
 ›
+axiomatization
+  where counting_requires_sign_changes:
+    "provable (count_real_zeros T = n) ⟹
+     n ≤ sign_changes_verified (proof_length (count_real_zeros T = n))"
 
 text ‹
 SUMMARY: Why this argument works for ζ but not for sin:
 
-1. BOTH have infinitely many zeros
-2. BOTH are continuous (so IVT applies)
-3. BOTH satisfy sign_changes_grows (unbounded zeros)
+1. BOTH have infinitely many zeros (sign_changes_grows holds for both)
+2. BOTH are continuous
 
-But they differ in sign_changes_bounded:
-  - sin: FAILS sign_changes_bounded because zeros have formula x = nπ, 
-    so counting doesn't require verifying sign changes. Proof length is constant.
-  - ζ(1/2 + it): SATISFIES sign_changes_bounded because no independently 
-    accessible counting formula exists (without assuming RH). Counting REQUIRES 
-    verifying sign changes. Proof length grows with count.
+But they differ in counting_requires_sign_changes:
+  - sin: FAILS because zeros have formula x = nπ that directly gives the count
+    with constant proof length
+  - ζ(1/2 + it): SATISFIES because no direct formula exists - any counting
+    requires verifying sign changes, so proof length grows with count
 
-This distinction is the essence of Feinstein's argument.
+The argument: If RH is provable with proof length L, then for large enough T,
+count_real_zeros T > sign_changes_verified L. But proving this count requires
+length sufficient for that many sign changes. Yet the count should be derivable
+from RH with length ≤ L. This is impossible for large enough T.
 ›
 
 text ‹Main theorem: The Riemann Hypothesis is unprovable›
@@ -204,9 +182,10 @@ proof
     by (smt (verit) T_pos assm n_def provable_imp provable_refl 
         provable_sound provable_trans riemann_hypothesis_def)
   
-  text ‹But then n must be bounded by what the proof can verify›
+  text ‹By counting_requires_sign_changes, proving this count requires
+    verifying n sign changes›
   have "n ≤ sign_changes_verified (proof_length (count_real_zeros T = n))"
-    using sign_changes_bounded[OF count_provable] by blast
+    using counting_requires_sign_changes[OF count_provable] by blast
   
   text ‹The count is derivable from RH, so its proof length is bounded by L›
   have instance_from_universal: "riemann_hypothesis ⟹ count_real_zeros T = n"
