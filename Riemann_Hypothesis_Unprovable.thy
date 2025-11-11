@@ -109,20 +109,15 @@ JUSTIFICATION - Why this axiom must hold:
 The argument principle and Riemann-von Mangoldt formula give a formula for 
 count_critical_strip_zeros T (counting all complex zeros in the critical strip).
 
-If the RH is true, then count_real_zeros T = count_critical_strip_zeros T, so 
-this formula would also count the real zeros (zeros on the critical line).
-
-However, to use this as a count of zeros of ζ(1/2 + it) for REAL t, you must 
-first PROVE that count_real_zeros T = count_critical_strip_zeros T, which 
-means proving all critical strip zeros lie on the critical line - but that's 
-the RH itself!
+But using this to count zeros on the critical line requires first proving that
+all critical strip zeros are on the critical line - which is RH itself!
 
 Therefore, there are only two ways to prove count_real_zeros T = n:
   1. Verify n sign changes directly (proof length grows with n)
-  2. First prove the RH, then use the argument principle (circular when proving RH)
+  2. First prove the RH, then use the formula (circular when proving the RH)
 
 Since option 2 is circular when our goal is to determine if RH is provable,
-any proof of count_real_zeros T = n must use option 1, which requires proof
+any proof of count_real_zeros T = n must use option 1, which requires a proof
 length sufficient to verify n sign changes.
 
 CONTRAST: For sin(x), the location theorem sin z = 0 ⟺ z = nπ is provable 
