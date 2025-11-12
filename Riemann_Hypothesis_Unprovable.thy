@@ -21,23 +21,22 @@ Equivalently, the RH states that for all T > 0:
   (total number of zeros in critical strip in [0,T])
 
 Feinstein observes:
-1. To count zeros of ζ(1/2 + it) in [0,T], we must count sign changes of 
-   the Riemann-Siegel function Z(t) = ζ(1/2 + ti)·exp(iϑ(t))
-   
-2. "Because the formula for the real roots t of ζ(1/2 + it) cannot be 
+
+1. "Because the formula for the real roots t of ζ(1/2 + it) cannot be 
    reduced to a formula that is simpler than the equation, ζ(1/2 + it) = 0, 
    the only way to determine the number of real roots t of ζ(1/2+it) in 
    which 0 < t < T is to count the changes in sign of Z(t), where 0 < t < T."
+   (where Z(t) = ζ(1/2 + ti)·exp(iϑ(t)) is the Riemann-Siegel function)
 
-3. Counting sign changes requires verifying both positive and negative values,
+2. Counting sign changes requires verifying both positive and negative values,
    which requires checking infinitely many points
 
-4. A proof of finite length L can verify at most f(L) sign changes for some 
+3. A proof of finite length L can verify at most f(L) sign changes for some 
    computable function f
 
-5. But for large enough T, the number of zeros exceeds f(L)
+4. But for large enough T, the number of zeros exceeds f(L)
 
-6. Therefore, no finite proof can establish the count for all T, so the RH is 
+5. Therefore, no finite proof can establish the count for all T, so the RH is 
    unprovable
 
 This formalization makes Feinstein's intuitive argument precise using axioms
@@ -102,7 +101,7 @@ This axiom captures: "the formula for the real roots t of ζ(1/2 + it) cannot
 be reduced to a formula that is simpler than the equation, ζ(1/2 + it) = 0"
 
 The axiom states: To prove that count_real_zeros T equals a specific number n,
-you must verify n sign changes, which bounds the proof length.
+your proof length must be sufficient to verify at least n sign changes.
 
 JUSTIFICATION - Why this axiom must hold:
 
@@ -117,14 +116,14 @@ Therefore, there are only two ways to prove count_real_zeros T = n:
   2. First prove the RH, then use the argument principle formula
 
 Option 2 is circular reasoning: to prove the RH, we need to prove counts for all T,
-but using option 2 to prove those counts requires first having proved RH. This
+but using option 2 to prove those counts requires first having proved the RH. This
 is logically invalid - we cannot assume the RH to prove the RH.
 
 Therefore, any proof of count_real_zeros T = n must use option 1, which requires 
 a proof length sufficient to verify n sign changes.
 
 CONTRAST: For sin(x), the theorem sin z = 0 ⟺ z = nπ is provable INDEPENDENTLY 
-(from exponential properties), without circularity. This is why
+(from exponential properties), without circularity. This is why the axiom
 counting_requires_sign_changes fails for sin but holds for ζ.
 ›
 axiomatization
@@ -226,3 +225,46 @@ proof
 qed
 
 end
+
+text ‹
+CONCLUSION:
+
+This formalization provides a machine-verified proof that IF the axioms hold, 
+THEN the Riemann Hypothesis is unprovable.
+
+The critical axiom is counting_requires_sign_changes, which states that proving
+count_real_zeros T = n requires proof length sufficient to verify n sign changes.
+
+VALIDITY OF THE AXIOMS:
+
+We have provided justification for why this axiom should hold:
+
+1. The argument principle provides a formula for count_critical_strip_zeros T
+   (counting all complex zeros in the critical strip)
+
+2. To use this formula for counting real zeros (on the critical line), one must
+   first prove count_real_zeros T = count_critical_strip_zeros T
+
+3. Proving this equality for all T is the Riemann Hypothesis itself
+
+4. Therefore, using the formula to prove RH would be circular reasoning - 
+   assuming RH to prove RH
+
+5. The only non-circular method is to verify sign changes directly, which
+   requires proof length that grows with the count
+
+However, this justification is itself an informal mathematical argument. The 
+axiom formalizes a property of the zeta function that we believe to be true
+based on this reasoning, but it is not derived from more primitive mathematical
+principles within this formalization.
+
+MATHEMATICAL STATUS:
+
+This formalization captures Feinstein's argument precisely and verifies its
+logical structure. Whether the axioms accurately reflect properties of the
+Riemann zeta function is a mathematical question beyond the scope of formal
+verification.
+
+The proof is valid IF the axioms are true. We have provided reasons to believe
+the axioms are true, but these reasons are not themselves formalized.
+›
