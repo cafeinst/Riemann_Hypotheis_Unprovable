@@ -110,18 +110,21 @@ The argument principle and Riemann-von Mangoldt formula give a formula for
 count_critical_strip_zeros T (counting all complex zeros in the critical strip).
 
 But using this to count zeros on the critical line requires first proving that
-all critical strip zeros are on the critical line - which is RH itself!
+all critical strip zeros are on the critical line - which is the RH itself!
 
 Therefore, there are only two ways to prove count_real_zeros T = n:
   1. Verify n sign changes directly (proof length grows with n)
-  2. First prove the RH, then use the formula (circular when proving the RH)
+  2. First prove the RH, then use the argument principle formula
 
-Since option 2 is circular when our goal is to determine if RH is provable,
-any proof of count_real_zeros T = n must use option 1, which requires a proof
-length sufficient to verify n sign changes.
+Option 2 is circular reasoning: to prove the RH, we need to prove counts for all T,
+but using option 2 to prove those counts requires first having proved RH. This
+is logically invalid - we cannot assume the RH to prove the RH.
 
-CONTRAST: For sin(x), the location theorem sin z = 0 ⟺ z = nπ is provable 
-INDEPENDENTLY (from exponential properties), without circularity. This is why 
+Therefore, any proof of count_real_zeros T = n must use option 1, which requires 
+a proof length sufficient to verify n sign changes.
+
+CONTRAST: For sin(x), the theorem sin z = 0 ⟺ z = nπ is provable INDEPENDENTLY 
+(from exponential properties), without circularity. This is why
 counting_requires_sign_changes fails for sin but holds for ζ.
 ›
 axiomatization
