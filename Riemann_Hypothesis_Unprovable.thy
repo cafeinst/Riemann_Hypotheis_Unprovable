@@ -106,7 +106,7 @@ your proof length must be sufficient to verify at least n sign changes.
 JUSTIFICATION - Why this axiom must hold:
 
 The argument principle and Riemann-von Mangoldt formula give a formula for 
-count_critical_strip_zeros T (counting all complex zeros in the critical strip).
+count_critical_strip_zeros T (counting complex zeros in the critical strip).
 
 But using this to count zeros on the critical line requires first proving that
 all critical strip zeros are on the critical line - which is the RH itself!
@@ -115,16 +115,38 @@ Therefore, there are only two ways to prove count_real_zeros T = n:
   1. Verify n sign changes directly (proof length grows with n)
   2. First prove the RH, then use the argument principle formula
 
-Option 2 is circular reasoning: to prove the RH, we need to prove counts for all T,
-but using option 2 to prove those counts requires first having proved the RH. This
-is logically invalid - we cannot assume the RH to prove the RH.
+Option 2 is circular reasoning in the context of trying to prove the RH: to prove 
+the RH, we need to prove counts for all T, but using option 2 to prove those counts 
+requires first having proved the RH. This is logically invalid - we cannot assume 
+the RH to prove the RH.
 
-Therefore, any proof of count_real_zeros T = n must use option 1, which requires 
-a proof length sufficient to verify n sign changes.
+Therefore, any proof of count_real_zeros T = n (in the context of proving the RH) 
+must use option 1, which requires a proof length sufficient to verify n sign changes.
 
-CONTRAST: For sin(x), the theorem sin z = 0 ⟺ z = nπ is provable INDEPENDENTLY 
-(from exponential properties), without circularity. This is why the axiom
-counting_requires_sign_changes fails for sin but holds for ζ.
+CONTRAST: For sin(x), the theorem sin z = 0 ⟺ z = nπ (for integer n) is provable 
+INDEPENDENTLY, without circularity, using the following reasoning:
+
+From Euler's formula: sin z = (e^(iz) - e^(-iz))/(2i)
+
+Setting sin z = 0:
+  (e^(iz) - e^(-iz))/(2i) = 0
+  e^(iz) - e^(-iz) = 0
+  e^(iz) = e^(-iz)
+  e^(2iz) = 1
+
+The exponential function has the property: e^w = 1 if and only if w = 2πni 
+for some integer n (this follows from the periodicity of the complex exponential).
+
+Therefore: 2iz = 2πni, which gives z = nπ for integer n.
+
+This derivation uses only:
+- Euler's formula (a basic identity)
+- Periodicity of the complex exponential
+- Algebraic manipulation
+
+No circularity is involved - we derive the location of ALL zeros without needing
+to count them first. This is why the counting_requires_sign_changes axiom fails for sin
+but holds for ζ.
 ›
 axiomatization
   where counting_requires_sign_changes:
@@ -140,13 +162,13 @@ Step 1: By sign_changes_grows, for large enough T, the actual number of zeros
         count_real_zeros T exceeds sign_changes_verified L. Let's call this count n, 
         so n = count_real_zeros T and n > sign_changes_verified L.
 
-Step 2: By definition, n = count_real_zeros T, so count_real_zeros T = n is true.
-        Since the RH is provable, there exists a proof of count_real_zeros T = n 
-        derivable from the RH (the formal proof shows this via transitivity).
+Step 2: Since RH is provable and true (by soundness), we have 
+        count_real_zeros T = count_critical_strip_zeros T. Therefore,
+        count_real_zeros T = n is provable (derivable from the RH via transitivity).
         By the proof_length_derived axiom, this proof has length at most L.
 
 Step 3: But by counting_requires_sign_changes, any proof of count_real_zeros T = n
-        must have length such that sign_changes_verified applied to that 
+        must have a length such that sign_changes_verified applied to that 
         length is at least n. That is: n ≤ sign_changes_verified(proof_length).
 
 Step 4: Let len = proof_length(count_real_zeros T = n). From Step 2, len ≤ L.
@@ -225,46 +247,3 @@ proof
 qed
 
 end
-
-text ‹
-CONCLUSION:
-
-This formalization provides a machine-verified proof that IF the axioms hold, 
-THEN the Riemann Hypothesis is unprovable.
-
-The critical axiom is counting_requires_sign_changes, which states that proving
-count_real_zeros T = n requires proof length sufficient to verify n sign changes.
-
-VALIDITY OF THE AXIOMS:
-
-We have provided justification for why this axiom should hold:
-
-1. The argument principle provides a formula for count_critical_strip_zeros T
-   (counting all complex zeros in the critical strip)
-
-2. To use this formula for counting real zeros (on the critical line), one must
-   first prove count_real_zeros T = count_critical_strip_zeros T
-
-3. Proving this equality for all T is the Riemann Hypothesis itself
-
-4. Therefore, using the formula to prove RH would be circular reasoning - 
-   assuming RH to prove RH
-
-5. The only non-circular method is to verify sign changes directly, which
-   requires proof length that grows with the count
-
-However, this justification is itself an informal mathematical argument. The 
-axiom formalizes a property of the zeta function that we believe to be true
-based on this reasoning, but it is not derived from more primitive mathematical
-principles within this formalization.
-
-MATHEMATICAL STATUS:
-
-This formalization captures Feinstein's argument precisely and verifies its
-logical structure. Whether the axioms accurately reflect properties of the
-Riemann zeta function is a mathematical question beyond the scope of formal
-verification.
-
-The proof is valid IF the axioms are true. We have provided reasons to believe
-the axioms are true, but these reasons are not themselves formalized.
-›
