@@ -5,48 +5,40 @@ begin
 text ‹
 FORMALIZATION OF AN UNPROVABILITY ARGUMENT FOR THE RIEMANN HYPOTHESIS
 
-Formalization by Craig Alan Feinstein.
+This theory develops a formal version of the metamathematical argument
+presented in:
 
-This theory formalizes the argument from:
-  Craig Alan Feinstein, "The Riemann Hypothesis is Unprovable"
-  https://arxiv.org/abs/math/0309367
+  Craig Alan Feinstein, *The Riemann Hypothesis is Unprovable*,
+  arXiv:math/0309367.
 
-The Riemann Hypothesis (RH) states that all non-trivial zeros of the Riemann
-zeta function in the critical strip {s = σ + ti ∣ 0 < σ < 1} lie on the
-critical line {s = 1/2 + ti}.
+The Riemann Hypothesis (RH) asserts that all non-trivial zeros of the Riemann
+zeta function ζ(s) in the critical strip 0 < Re(s) < 1 lie on the critical
+line Re(s) = 1/2. Equivalently, for each T > 0,
 
-Equivalently, RH can be expressed as: for all T > 0,
+  (number of zeros on the critical line with 0 < Im(s) < T)
+  =
+  (number of zeros in the critical strip with 0 < Im(s) < T).
 
-  (number of zeros on the critical line with 0 < Im(s) < T) =
-  (total number of zeros in the critical strip with 0 < Im(s) < T).
+The cited article gives an informal argument that the RH cannot be proven 
+within any formal system whose proofs can verify only finitely many sign changes of the
+Riemann–Siegel function Z(t). The essential idea is that:
 
-The informal unprovability argument can be sketched as follows.
+  • there is no known closed-form reduction of ζ(1/2 + it) = 0
+    to a simpler explicit equation with expressible solutions;
 
-1. The real roots t of ζ(1/2 + it) (i.e. zeros on the critical line) are not
-   known to admit any simpler closed-form description than the equation
-     ζ(1/2 + it) = 0
-   itself. The only known way to determine the number of such roots with
-   0 < t < T is to count the sign changes of the associated Riemann–Siegel
-   function Z(t) for 0 < t < T, where Z(t) = ζ(1/2 + it) · exp(iϑ(t)).
+  • therefore, the only non-circular method of counting zeros on the
+    critical line is by verifying sign changes of Z(t);
 
-2. Counting sign changes requires verifying that Z(t) takes both positive and
-   negative values between consecutive zeros, which in principle involves
-   checking many local conditions.
+  • but any proof of finite length can verify only finitely many such
+    sign changes;
 
-3. A proof of finite length L can verify at most f(L) sign changes, for some
-   computable function f that bounds how many local verifications are possible
-   in a proof of that length.
+  • yet the number of zeros below height T grows unboundedly with T.
 
-4. For sufficiently large T, the actual number of zeros with 0 < t < T
-   exceeds f(L).
-
-5. Hence no finite proof can establish the exact zero count for all T, and
-   therefore RH cannot be proved in such a system.
-
-The goal of this theory is to make this style of argument precise, by
-abstracting the notions of “provability”, “proof length”, and “verifying
-sign changes”, and showing that under suitable assumptions about these
-notions, RH cannot be provable.
+The aim of this Isabelle/HOL theory is to isolate the structural
+metamathematical assumptions implicitly used in the argument, and to show
+that under these assumptions the Riemann Hypothesis cannot be provable.
+This formalization does not depend on any analytic details beyond the
+definitions of the zero-counting functions.
 ›
 
 section ‹Analytic Setup›
@@ -92,8 +84,8 @@ long enough to verify at least n sign changes of Z.
 ›
 
 text ‹
-Heuristically, mathematical proofs that count solutions of equations often
-fall into two paradigmatic categories:
+Mathematical proofs that count solutions to equations typically follow one of two 
+broad methodological patterns:
 
 -------------------------------------------------------------------------------
 METHOD 1: Direct enumeration / verification
@@ -158,9 +150,9 @@ or analytic manipulation has been found that converts ζ(1/2 + it) = 0 into a
 simpler closed-form equation with explicitly solvable roots.
 
 The argument principle does provide a formula for the number of zeros of ζ(s)
-in the critical strip up to height T. If RH holds, this strip-count equals the
+in the critical strip up to height T. If the RH holds, this strip-count equals the
 number of critical-line zeros. However, using the strip-count as a shortcut to
-count critical-line zeros in order to prove RH is circular: one must already
+count critical-line zeros in order to prove the RH is circular: one must already
 assume that all zeros in the strip lie on the line to justify equating the two
 counts.
 
@@ -183,9 +175,9 @@ sign_changes_verified that measures how many sign changes can be verified
 by a proof of a given length. The locale RH_assumptions collects the
 structural assumptions imposed on these objects.
 
-The intention is not to model any particular concrete proof system, but rather
-to describe a minimal metatheoretic framework in which the argument can be
-carried out. The assumptions fall into several natural groups.
+The intention is not to model any particular concrete proof system, but to
+provide a minimal metatheoretic framework sufficient to formalize and carry
+out the unprovability argument for the Riemann Hypothesis.
 ›
 
 text ‹
@@ -193,7 +185,7 @@ text ‹
 1. Provability and soundness
 -------------------------------------------------------------------------------
 
-The predicate provable P expresses that the formula ‹P› has a proof in some
+The predicate provable P expresses that the formula P has a proof in some
 fixed underlying formal system. The assumption
 
   * provable_sound: provable P ⟹ P
@@ -204,7 +196,7 @@ riemann_hypothesis from provable riemann_hypothesis inside Isabelle/HOL.
 
 We also assume minimal structural rules:
 
-  * provable_imp: provable (P ⟶ Q) ⟹ provable P ⟹ provable Q  
+  * provable_imp: ⟦provable (P ⟶ Q); provable P⟧ ⟹ provable Q  
   * provable_refl: provable (x = x)
 
 corresponding to modus ponens and reflexivity of equality. These rules are
@@ -223,11 +215,9 @@ single structural principle:
         ⟦P ⟹ Q; provable P; provable Q⟧
         ⟹ proof_length Q ≤ proof_length P
 
-This expresses the meta-logical idea that if Q can be derived from P by a
-fixed bounded transformation, and both P and Q are provable, then any
-proof of Q cannot be longer than a proof of P. Intuitively, strengthening
-a theorem does not automatically yield shorter proofs unless the system
-contains specific shortcuts.
+This expresses the meta-logical idea that if Q can be obtained from P by a
+fixed derivation and both formulas are provable, then a proof of Q cannot
+require more steps than a proof of P.
 
 -------------------------------------------------------------------------------
 3. Verifying sign changes
@@ -260,12 +250,11 @@ The central additional assumption is:
         provable (count_real_zeros T = n)
         ⟹ n ≤ sign_changes_verified (proof_length (count_real_zeros T = n))
 
-This expresses the methodological constraint that, in the absence of any known
-non-circular closed-form reduction of ζ(1/2 + it) = 0, any proof establishing
-an exact zero count count_real_zeros T = n must be long enough to verify at
-least n sign changes of Z(t) on (0,T). In other words, there is no
-“free” global counting method available within the metatheory; exact counting
-requires local zero verification.
+This assumption formalizes the methodological principle that, in the absence
+of a non-circular closed-form reduction of ζ(1/2 + it) = 0, any proof of an
+exact equality count_real_zeros T = n must verify n individual sign
+changes of Z(t). Consequently, the proof length must be large enough to certify 
+those n local zero verifications.
 
 -------------------------------------------------------------------------------
 Summary
@@ -307,28 +296,30 @@ section ‹The Unprovability Argument›
 
 text ‹
 The following theorem formalizes the unprovability argument sketched in the
-introduction. It shows that, under the abstract assumptions in the locale
+introduction. It shows that under the abstract assumptions in the locale
 RH_Assumptions, the Riemann Hypothesis cannot be provable in the
 underlying formal system.
 ›
 
 text ‹
-Assume for contradiction that RH is provable, with proof length L.
-By sign_changes_grows, there exists a T > 0 such that
-count_real_zeros T is strictly larger than sign_changes_verified L.
-Soundness then yields that RH is true, so for this T the real-zero count
-equals the critical-strip zero count. Instantiating this equality gives
-a concrete number n with count_real_zeros T = n.
+Assume for the sake of contradiction that the RH is provable, with proof length L.
+By sign_changes_grows, there exists T > 0 such that count_real_zeros T is strictly 
+larger than sign_changes_verified L. Soundness then yields that the RH is true, so for 
+this T the real-zero count equals the critical-strip zero count. From this equality 
+we obtain a specific natural number n such that count_real_zeros T = n.
 
 Using the abstract provability rules, this equality is itself provable, and
-by the methodological assumption counting_requires_sign_changes, any proof
-of this equality must be long enough to verify at least n sign changes. This
-forces a lower bound on the proof length of count_real_zeros T = n, which,
-combined with proof_length_derived and monotonicity of
-sign_changes_verified, yields n ≤ sign_changes_verified L. This
-contradicts the choice of T, which ensured n > sign_changes_verified L.
+by counting_requires_sign_changes, any proof of it must be long enough 
+to verify at least n sign changes. This gives a lower bound on the proof length 
+of count_real_zeros T = n, and combining this with proof_length_derived and the 
+monotonicity of sign_changes_verified yields
 
-Thus RH cannot be provable under the assumptions of the locale.
+    n ≤ sign_changes_verified L.
+
+This contradicts the choice of T, which ensured that
+n > sign_changes_verified L.
+
+Thus, the RH cannot be provable under the assumptions of the locale.
 ›
 
 text ‹Main theorem: The Riemann Hypothesis is not provable under these assumptions.›
