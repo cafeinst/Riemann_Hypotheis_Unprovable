@@ -11,13 +11,13 @@ presented in:
   Craig Alan Feinstein, *The Riemann Hypothesis is Unprovable*,
   arXiv:math/0309367.
 
-In preparing this Isabelle/HOL formalisation and its accompanying
-expository text, the present author made use of two AI language
-models — ChatGPT (OpenAI) and Claude (Anthropic) — to help draft and
-refine natural-language explanations, background discussions, and
-high-level summaries.  All mathematical definitions, assumptions, 
-and proofs are fully formalised in Isabelle/HOL and mechanically 
-verified.
+The author of this formalisation received assistance from two AI systems —
+ChatGPT (OpenAI) and Claude (Anthropic). Their assistance consisted of
+drafting and refining explanatory text, improving the readability of the
+introduction and comments, and helping diagnose or structure Isabelle/HOL
+proof scripts.  All formal derivations in this development are verified
+directly by Isabelle/HOL; no unverified inference produced by an AI system
+is accepted.
 
 The Riemann Hypothesis (RH) asserts that all non-trivial zeros of the Riemann
 zeta function ζ(s) in the critical strip 0 < Re(s) < 1 lie on the critical
