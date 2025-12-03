@@ -11,10 +11,13 @@ presented in:
   Craig Alan Feinstein, *The Riemann Hypothesis is Unprovable*,
   arXiv:math/0309367.
 
-The author received assistance from two AI systems — ChatGPT (OpenAI) and 
-Claude (Anthropic) — primarily in generating explanatory text, improving 
-readability, and refining the presentation of structural assumptions. All 
-proofs in this repository are checked by Isabelle/HOL.
+In preparing this Isabelle/HOL formalisation and its accompanying
+expository text, the present author made use of two AI language
+models — ChatGPT (OpenAI) and Claude (Anthropic) — to help draft and
+refine natural-language explanations, background discussions, and
+high-level summaries.  All mathematical definitions, assumptions, 
+and proofs are fully formalised in Isabelle/HOL and mechanically 
+verified.
 
 The Riemann Hypothesis (RH) asserts that all non-trivial zeros of the Riemann
 zeta function ζ(s) in the critical strip 0 < Re(s) < 1 lie on the critical
