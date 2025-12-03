@@ -11,6 +11,11 @@ presented in:
   Craig Alan Feinstein, *The Riemann Hypothesis is Unprovable*,
   arXiv:math/0309367.
 
+The author received assistance from two AI systems — ChatGPT (OpenAI) and 
+Claude (Anthropic) — primarily in generating explanatory text, improving 
+readability, and refining the presentation of structural assumptions. All 
+proofs in this repository are checked by Isabelle/HOL.
+
 The Riemann Hypothesis (RH) asserts that all non-trivial zeros of the Riemann
 zeta function ζ(s) in the critical strip 0 < Re(s) < 1 lie on the critical
 line Re(s) = 1/2. Equivalently, for each T > 0,
@@ -25,8 +30,8 @@ proofs are able to establish, the RH cannot be proven. The essential idea is tha
   • there is no known closed-form reduction of ζ(1/2 + it) = 0
     to a simpler explicit equation with expressible solutions;
 
-  • therefore, the only non-circular method of counting zeros on the
-    critical line is by verifying sign changes of Z(t);
+  • therefore, the only method of counting zeros on the critical line is 
+    by verifying sign changes of the Riemann-Siegel function Z(t);
 
   • but a proof of finite length can only verify finitely many such
     sign changes;
@@ -78,11 +83,10 @@ The central idea in the informal argument is that the equation
 solutions can be written down explicitly. In other words, no explicit formula
 is known for the real zeros t of ζ(1/2 + it) beyond the defining equation
 itself. Consequently, any proof of an exact zero count must, in effect, verify 
-each zero via local information about the function Z(t).
-
-The axiom below captures this idea by asserting that any proof establishing 
-an exact equality count_real_zeros T = n must be long enough to account for 
-n distinct sign changes of Z on (0,T).
+each zero via local information about the function Z(t). An assumption in the 
+locale below captures this idea by asserting that any proof establishing an 
+exact equality count_real_zeros T = n must be long enough to account for n 
+distinct sign changes of Z on (0,T).
 
 Mathematical proofs that count solutions to equations typically follow one of two 
 broad patterns:
@@ -150,7 +154,7 @@ or analytic manipulation has been found that converts ζ(1/2 + it) = 0 into a
 simpler closed-form equation with explicitly solvable roots.
 
 The argument principle does provide a formula (called the the Riemann–von Mangoldt 
-formula)for the number of zeros of ζ(s) in the critical strip up to height T. 
+formula) for the number of zeros of ζ(s) in the critical strip up to height T. 
 If the RH holds, this strip-count equals the number of critical-line zeros. 
 However, using the strip-count as a shortcut to count critical-line zeros in 
 order to prove the RH is circular: one must already assume that all zeros in the 
