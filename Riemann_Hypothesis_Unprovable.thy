@@ -116,7 +116,7 @@ The informal argument begins from the observation that the equation
 \[
   \zeta\!\left(\tfrac12 + it\right) = 0
 \]
-admits no known non- closed-form reduction whose real solutions can be
+admits no known non-circular closed-form reduction whose real solutions can be
 written down explicitly.  Beyond the defining equation itself, no explicit
 formula is known for the real zeros \(t\) of \(\zeta(\tfrac12 + it)\).
 
@@ -144,16 +144,16 @@ follow one of two broad patterns:
 \end{itemize}
 
 For the critical-line equation \(\zeta(\tfrac12 + it) = 0\), no comparable
-non- reduction is known.  Although the argument principle yields a
-formula for counting zeros in the critical strip, using this formula to count
-critical-line zeros in order to \emph{prove} the Riemann Hypothesis would be
-, since it already presupposes that all strip zeros lie on the critical
-line.
+non-circular closed-form reduction is known. Although the argument principle 
+yields a formula for counting zeros in the critical strip, using this formula 
+to count critical-line zeros in order to \emph{prove} the Riemann Hypothesis 
+would be circular, since it already presupposes that all strip zeros lie on 
+the critical line.
 
 We therefore adopt the following methodological stance: in the absence of a
-non- closed-form reduction, any proof that establishes an exact
+non-circular closed-form reduction, any proof that establishes an exact
 critical-line zero count must support verification of the corresponding number
-of sign changes of \(Z(t)\).  This principle is encoded below as an abstract
+of sign changes of \(Z(t)\). This principle is encoded below as an abstract
 assumption relating proof length to sign-change verification capacity.
 \<close>
 
