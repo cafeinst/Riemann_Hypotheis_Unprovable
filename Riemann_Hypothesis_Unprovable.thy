@@ -79,15 +79,15 @@ at a purely metatheoretical level.
 \<close>
 
 text \<open>The Riemann zeta function is treated as an abstract complex-valued function.\<close>
-axiomatization zeta :: "complex ⇒ complex"
+axiomatization zeta :: "complex \<Rightarrow> complex"
 
 text \<open>
 The Riemann--Siegel function Z(t) is introduced abstractly as a real-valued
 function whose zeros correspond exactly to the zeros of zeta on the critical
-line.  No detailed analytic properties of Z are used in the sequel.
+line.  We do not use any further facts about Z(t).
 \<close>
-axiomatization Z :: "real ⇒ real"
-  where Z_zero_iff: "⋀t. Z t = 0 ⟷ zeta (Complex (1/2) t) = 0"
+axiomatization Z :: "real \<Rightarrow> real"
+  where Z_zero_iff: "\<And>t. Z t = 0 \<longleftrightarrow> zeta (Complex (1/2) t) = 0"
 
 text \<open>
 Rather than defining zero counts analytically, we introduce them as abstract
@@ -97,8 +97,8 @@ represents the number of zeros of zeta(s) in the critical strip with
 0 < Im(s) < T.
 \<close>
 
-consts count_real_zeros :: "real ⇒ nat"
-consts count_critical_strip_zeros :: "real ⇒ nat"
+consts count_real_zeros :: "real \<Rightarrow> nat"
+consts count_critical_strip_zeros :: "real \<Rightarrow> nat"
 
 text \<open>
 The Riemann Hypothesis asserts that these two counts are equal for all positive
@@ -106,69 +106,69 @@ heights T.
 \<close>
 
 definition riemann_hypothesis :: bool where
-  "riemann_hypothesis ⟷
-     (∀T>0. count_real_zeros T = count_critical_strip_zeros T)"
+  "riemann_hypothesis \<longleftrightarrow>
+     (\<forall>T>0. count_real_zeros T = count_critical_strip_zeros T)"
 
 section \<open>Key Assumption About Counting Zeros\<close>
 
 text \<open>
-The informal argument rests on the observation that the equation
+The informal argument begins from the observation that the equation
 \[
   \zeta\!\left(\tfrac12 + it\right) = 0
 \]
-does not admit any known non-circular closed-form reduction whose real solutions
-can be written down explicitly.  In other words, beyond the defining equation
-itself, no explicit formula is known for the real zeros \(t\) of
-\(\zeta(\tfrac12 + it)\).
+admits no known non- closed-form reduction whose real solutions can be
+written down explicitly.  Beyond the defining equation itself, no explicit
+formula is known for the real zeros \(t\) of \(\zeta(\tfrac12 + it)\).
 
-As a consequence, any proof that establishes an *exact* zero count
+Accordingly, any proof that establishes an \emph{exact} equality
 \[
   \texttt{count\_real\_zeros}(T) = n
 \]
-must, in effect, verify the existence of those \(n\) zeros via local information
-about the Riemann–Siegel function \(Z(t)\), such as sign changes on the interval
-\((0,T)\).
+must, in effect, account for the existence of those \(n\) zeros using local
+information about the Riemann--Siegel function \(Z(t)\), such as verifying
+\(n\) distinct sign changes on the interval \((0,T)\).
 
-More generally, mathematical proofs that count solutions to equations typically
-follow one of two patterns:
+More generally, mathematical proofs that count solutions to equations tend to
+follow one of two broad patterns:
 
 \begin{itemize}
   \item \emph{Direct verification}, in which solutions are established
-        individually via local criteria.  In the present context, this amounts
-        to verifying distinct sign changes of \(Z(t)\), and the required proof
-        resources grow with the number of zeros.
+        individually using local criteria.  In the present setting, this
+        corresponds to verifying sign changes of \(Z(t)\), and the required
+        proof resources grow with the number of zeros that must be certified.
 
   \item \emph{Reduction to a closed form}, in which the original equation is
         transformed into a simpler explicit equation whose solutions can be
         enumerated arithmetically.  A classical example is the reduction of
-        \(\sin z = 0\) to \(z = n\pi\).
+        \(\sin z = 0\) to the explicit solution set \(z = n\pi\).
 \end{itemize}
 
 For the critical-line equation \(\zeta(\tfrac12 + it) = 0\), no comparable
-non-circular reduction is known.  Although the argument principle yields a
+non- reduction is known.  Although the argument principle yields a
 formula for counting zeros in the critical strip, using this formula to count
-critical-line zeros in order to prove the Riemann Hypothesis would be circular,
-since it already presupposes that all strip zeros lie on the line.
+critical-line zeros in order to \emph{prove} the Riemann Hypothesis would be
+, since it already presupposes that all strip zeros lie on the critical
+line.
 
-Accordingly, we adopt the methodological stance that, in the absence of a
-closed-form reduction, any proof of an exact critical-line zero count must
-support verification of the corresponding number of sign changes of \(Z(t)\).
-This principle is encoded below as an abstract assumption relating proof length
-to sign-change verification capacity.
+We therefore adopt the following methodological stance: in the absence of a
+non- closed-form reduction, any proof that establishes an exact
+critical-line zero count must support verification of the corresponding number
+of sign changes of \(Z(t)\).  This principle is encoded below as an abstract
+assumption relating proof length to sign-change verification capacity.
 \<close>
 
 locale RH_Assumptions =
-  fixes proof_length :: "bool ⇒ nat"
-    and provable :: "bool ⇒ bool"
-    and sign_changes_verified :: "nat ⇒ nat"
+  fixes proof_length :: "bool \<Rightarrow> nat"
+    and provable :: "bool \<Rightarrow> bool"
+    and sign_changes_verified :: "nat \<Rightarrow> nat"
   assumes sign_changes_grows:
-    "⋀L. ∃T>0. count_real_zeros T > sign_changes_verified L"
+    "\<And>L. \<exists>T>0. count_real_zeros T > sign_changes_verified L"
   and provable_RH_instance:
-    "⟦provable riemann_hypothesis; T > 0⟧ ⟹
+    "\<lbrakk>provable riemann_hypothesis; T > 0\<rbrakk> \<Longrightarrow>
        provable (count_real_zeros T = count_critical_strip_zeros T)"
   and counting_requires_sign_changes':
     "provable (count_real_zeros T = count_critical_strip_zeros T)
-     ⟹ count_real_zeros T ≤ sign_changes_verified (proof_length riemann_hypothesis)"
+     \<Longrightarrow> count_real_zeros T \<le> sign_changes_verified (proof_length riemann_hypothesis)"
 begin
 
 text \<open>
@@ -250,7 +250,7 @@ proof
   have pr_counts: "provable (count_real_zeros T = count_critical_strip_zeros T)"
     using provable_RH_instance[OF prh T_pos] .
 
-  have upper: "count_real_zeros T ≤ sign_changes_verified ?L"
+  have upper: "count_real_zeros T \<le> sign_changes_verified ?L"
     using counting_requires_sign_changes'[OF pr_counts] by simp
 
   show False
