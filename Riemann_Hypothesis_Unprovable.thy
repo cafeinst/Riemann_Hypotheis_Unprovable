@@ -42,47 +42,15 @@ formal proofs are able to establish, the Riemann Hypothesis cannot be proven.
 The core idea is based on the following observations:
 
 \begin{itemize}
-  \item There is no known closed-form reduction of the equation
-        $\zeta(\tfrac{1}{2} + i t) = 0$ to a simpler explicit equation whose
-        solutions can be written down in closed form.
-
-  \item Consequently, the cited argument proceeds by relating exact critical-line 
-        zero counts to verification of sign changes of the Riemann--Siegel function
-        $Z(t)$.
-
-  \item Any proof of finite length can verify only finitely many such sign
-        changes.
-
-  \item However, the number of zeros of $\zeta(\tfrac{1}{2} + i t)$ below height
-        $T$ grows without bound as $T$ increases.
+  \item Exact counting of critical-line zeros appears to require
+        verification of sign changes of the Riemann--Siegel function \(Z(t)\).
+  \item Any proof of finite length can verify only finitely many such sign changes.
+  \item The number of zeros of \(\zeta(\tfrac12 + it)\) below height \(T\)
+        grows without bound as \(T \to \infty\).
 \end{itemize}
 
 This tension suggests that a finite proof cannot establish the correctness of
 the Riemann Hypothesis for arbitrarily large heights.
-
-\subsection{Why Closed-Form Reductions Matter}
-
-In many classical cases, the solutions of transcendental equations can be
-counted using explicit algebraic reductions.  For example, the equation
-\[
-\sin z = 0
-\]
-can be transformed into
-\[
-e^{2 i z} = 1,
-\]
-from which one obtains the complete solution set
-\[
-z = n \pi \quad (n \in \mathbb{Z}).
-\]
-Once such a reduction is available, counting solutions up to a given bound
-becomes a purely arithmetic task.
-
-No analogous reduction is known for the equation
-$\zeta(\tfrac{1}{2} + i t) = 0$.  Although the argument principle yields a
-formula for counting zeros in the critical strip, using this strip count to
-prove the Riemann Hypothesis would be circular, since it presupposes that all
-zeros in the strip lie on the critical line.
 
 \subsection{Formalization Strategy}
 
@@ -141,72 +109,59 @@ definition riemann_hypothesis :: bool where
   "riemann_hypothesis ⟷
      (∀T>0. count_real_zeros T = count_critical_strip_zeros T)"
 
+section \<open>Key Assumption About Counting Zeros\<close>
+
 text \<open>
-\section{Key Assumption About Counting Zeros}
-
-The central idea in the informal unprovability argument is that the equation
+The informal argument rests on the observation that the equation
 \[
-\zeta\!\left(\tfrac{1}{2} + i t\right) = 0
+  \zeta\!\left(\tfrac12 + it\right) = 0
 \]
-cannot be reduced to any simpler closed-form equation whose solutions can be
-written down explicitly.  In other words, no explicit formula is known for the
-real zeros \( t \) of \( \zeta(\tfrac{1}{2} + i t) \) beyond the defining
-equation itself.
+does not admit any known non-circular closed-form reduction whose real solutions
+can be written down explicitly.  In other words, beyond the defining equation
+itself, no explicit formula is known for the real zeros \(t\) of
+\(\zeta(\tfrac12 + it)\).
 
-Consequently, any proof that establishes the correctness of the Riemann
-Hypothesis must, for each height \( T > 0 \), account for the exact number of
-critical-line zeros below that height.  In the absence of a non-circular
-closed-form reduction, this requires obtaining sufficient local information
-about the function \( Z(t) \) to certify the required number of sign changes.
+As a consequence, any proof that establishes an *exact* zero count
+\[
+  \texttt{count\_real\_zeros}(T) = n
+\]
+must, in effect, verify the existence of those \(n\) zeros via local information
+about the Riemann–Siegel function \(Z(t)\), such as sign changes on the interval
+\((0,T)\).
 
-The formal development below captures this idea in a deliberately restricted
-form.  Rather than imposing conditions on all possible zero-counting proofs,
-we assume only that:
+More generally, mathematical proofs that count solutions to equations typically
+follow one of two patterns:
 
 \begin{itemize}
-  \item if the Riemann Hypothesis is provable, then each of its concrete
-        instances
-        \[
-        \texttt{count\_real\_zeros}(T)
-        =
-        \texttt{count\_critical\_strip\_zeros}(T)
-        \quad (T > 0)
-        \]
-        is itself provable; and
+  \item \emph{Direct verification}, in which solutions are established
+        individually via local criteria.  In the present context, this amounts
+        to verifying distinct sign changes of \(Z(t)\), and the required proof
+        resources grow with the number of zeros.
 
-  \item any proof of such an instance must have sufficient proof length to
-        verify at least \(\texttt{count\_real\_zeros}(T)\) sign changes of
-        the function \( Z(t) \).
+  \item \emph{Reduction to a closed form}, in which the original equation is
+        transformed into a simpler explicit equation whose solutions can be
+        enumerated arithmetically.  A classical example is the reduction of
+        \(\sin z = 0\) to \(z = n\pi\).
 \end{itemize}
 
-This assumption reflects the methodological principle that, absent a
-non-circular closed-form characterization of the zeros of
-\( \zeta(\tfrac{1}{2} + i t) \), any proof of a global statement like the
-Riemann Hypothesis must still be able to support all of its concrete numerical
-instances.  The resource cost of doing so grows with the number of verified
-zeros.
+For the critical-line equation \(\zeta(\tfrac12 + it) = 0\), no comparable
+non-circular reduction is known.  Although the argument principle yields a
+formula for counting zeros in the critical strip, using this formula to count
+critical-line zeros in order to prove the Riemann Hypothesis would be circular,
+since it already presupposes that all strip zeros lie on the line.
 
-The role of this assumption is not to describe all conceivable methods of
-counting zeros, but only to formalize the minimal informational burden imposed
-by proofs of the Riemann Hypothesis itself.
+Accordingly, we adopt the methodological stance that, in the absence of a
+closed-form reduction, any proof of an exact critical-line zero count must
+support verification of the corresponding number of sign changes of \(Z(t)\).
+This principle is encoded below as an abstract assumption relating proof length
+to sign-change verification capacity.
 \<close>
 
 locale RH_Assumptions =
   fixes proof_length :: "bool ⇒ nat"
     and provable :: "bool ⇒ bool"
     and sign_changes_verified :: "nat ⇒ nat"
-    and dummy :: "'a itself"
-  assumes provable_sound:
-    "provable P ⟹ P"
-  and provable_and:
-    "⟦provable P; provable Q⟧ ⟹ provable (P ∧ Q)"
-  and provable_imp:
-    "⟦provable (P ⟶ Q); provable P⟧ ⟹ provable Q"
-  and proof_length_derived:
-    "⟦P ⟹ Q; provable P; provable Q⟧ ⟹ proof_length Q ≤ proof_length P"
-  and sign_changes_monotone:
-    "L1 ≤ L2 ⟹ sign_changes_verified L1 ≤ sign_changes_verified L2"
-  and sign_changes_grows:
+  assumes sign_changes_grows:
     "⋀L. ∃T>0. count_real_zeros T > sign_changes_verified L"
   and provable_RH_instance:
     "⟦provable riemann_hypothesis; T > 0⟧ ⟹
@@ -224,15 +179,11 @@ We now formalize the core unprovability argument.  The goal is to show that,
 under the abstract assumptions collected in the locale
 \texttt{RH\_Assumptions}, the Riemann Hypothesis cannot be provable.
 
-The key idea is as follows.
-A proof of the Riemann Hypothesis of finite length induces a fixed global bound
-on the amount of information that can be extracted from it within this abstract 
-metatheoretical model, and in particular on how many sign changes of the 
-Riemann--Siegel function \( Z(t) \) can be certified via proofs derived from it.  
-However, the number of real zeros of \( \zeta\!\left(\tfrac{1}{2} + i t\right) \) 
-below height \( T \) is unbounded as \( T \) grows. For sufficiently large \( T \), 
-this exceeds the verification capacity available at that fixed proof length, 
-leading to a contradiction.
+The key idea is that a proof of the Riemann Hypothesis of finite length induces
+a fixed bound on how many sign changes of the Riemann--Siegel function \(Z(t)\)
+can be certified by proofs derived from it.  Since the number of real zeros of
+\(\zeta(\tfrac12 + it)\) grows unboundedly with the height \(T\), this bound is
+eventually exceeded, yielding a contradiction.
 
 \subsection*{Outline of the Argument}
 
@@ -284,7 +235,7 @@ Under the abstract assumptions collected in the locale
 \texttt{RH\_Assumptions}, the Riemann Hypothesis is therefore not provable.
 \<close>
 
-text ‹Main theorem: The Riemann Hypothesis is not provable under these assumptions.›
+text \<open>Main theorem: The Riemann Hypothesis is not provable under these assumptions.\<close>
 theorem RH_unprovable:
   shows "¬ provable riemann_hypothesis"
 proof
