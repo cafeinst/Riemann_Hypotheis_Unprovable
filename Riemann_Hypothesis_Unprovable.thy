@@ -78,17 +78,6 @@ symbols, sufficient to state the Riemann Hypothesis and to discuss zero-counting
 at a purely metatheoretical level.
 \<close>
 
-text \<open>The Riemann zeta function is treated as an abstract complex-valued function.\<close>
-axiomatization zeta :: "complex \<Rightarrow> complex"
-
-text \<open>
-The Riemann--Siegel function Z(t) is introduced abstractly as a real-valued
-function whose zeros correspond exactly to the zeros of zeta on the critical
-line.  We do not use any further facts about Z(t).
-\<close>
-axiomatization Z :: "real \<Rightarrow> real"
-  where Z_zero_iff: "\<And>t. Z t = 0 \<longleftrightarrow> zeta (Complex (1/2) t) = 0"
-
 text \<open>
 Rather than defining zero counts analytically, we introduce them as abstract
 functions.  The intention is that count_real_zeros T represents the number of
@@ -112,49 +101,46 @@ definition riemann_hypothesis :: bool where
 section \<open>Key Assumption About Counting Zeros\<close>
 
 text \<open>
-The informal argument begins from the observation that the equation
+Mathematical proofs that count solutions to equations typically proceed in one
+of two ways.  Either solutions are verified individually using local criteria,
+or the equation is reduced to a closed form whose solutions can be enumerated
+arithmetically.  A classical example of the latter is the reduction of
+\(\sin z = 0\) to the explicit solution set \(z = n\pi\).
+
+The informal argument outlined above begins from the observation that, to date,
+no non-circular closed-form reduction is known for the critical-line equation
 \[
   \zeta\!\left(\tfrac12 + it\right) = 0
 \]
-admits no known non-circular closed-form reduction whose real solutions can be
-written down explicitly.  Beyond the defining equation itself, no explicit
-formula is known for the real zeros \(t\) of \(\zeta(\tfrac12 + it)\).
+that would yield an explicit description of all its real solutions.  Beyond the
+defining equation itself, no explicit formula has been found for the real zeros
+\(t\) of \(\zeta(\tfrac12 + it)\).
 
-Accordingly, any proof that establishes an \emph{exact} equality
+In the absence of such a reduction, any proof that establishes an \emph{exact}
+equality
 \[
   \texttt{count\_real\_zeros}(T) = n
 \]
 must, in effect, account for the existence of those \(n\) zeros using local
-information about the Riemann--Siegel function \(Z(t)\), such as verifying
+information about the Riemann--Siegel function \(Z(t)\), for example by verifying
 \(n\) distinct sign changes on the interval \((0,T)\).
 
-More generally, mathematical proofs that count solutions to equations tend to
-follow one of two broad patterns:
+Although the argument principle yields a formula for counting zeros in the
+critical strip, using this formula to count critical-line zeros in order to
+\emph{prove} the Riemann Hypothesis would be circular, since it already
+presupposes that all strip zeros lie on the critical line.
 
-\begin{itemize}
-  \item \emph{Direct verification}, in which solutions are established
-        individually using local criteria.  In the present setting, this
-        corresponds to verifying sign changes of \(Z(t)\), and the required
-        proof resources grow with the number of zeros that must be certified.
+Accordingly, we adopt the methodological stance that, in the absence of a
+non-circular closed-form reduction, any proof of an exact critical-line zero
+count must support verification of the corresponding number of sign changes of
+\(Z(t)\).  This principle is encoded below as an abstract assumption relating
+proof length to sign-change verification capacity.
 
-  \item \emph{Reduction to a closed form}, in which the original equation is
-        transformed into a simpler explicit equation whose solutions can be
-        enumerated arithmetically.  A classical example is the reduction of
-        \(\sin z = 0\) to the explicit solution set \(z = n\pi\).
-\end{itemize}
-
-For the critical-line equation \(\zeta(\tfrac12 + it) = 0\), no comparable
-non-circular closed-form reduction is known. Although the argument principle 
-yields a formula for counting zeros in the critical strip, using this formula 
-to count critical-line zeros in order to \emph{prove} the Riemann Hypothesis 
-would be circular, since it already presupposes that all strip zeros lie on 
-the critical line.
-
-We therefore adopt the following methodological stance: in the absence of a
-non-circular closed-form reduction, any proof that establishes an exact
-critical-line zero count must support verification of the corresponding number
-of sign changes of \(Z(t)\). This principle is encoded below as an abstract
-assumption relating proof length to sign-change verification capacity.
+The following locale does not attempt to capture provability in any standard
+formal system such as ZFC or Peano Arithmetic.  Instead, it axiomatizes a
+restricted notion of provability that reflects the methodological constraints
+described above.  The resulting non-provability statement is therefore purely
+conditional.
 \<close>
 
 locale RH_Assumptions =
@@ -164,34 +150,49 @@ locale RH_Assumptions =
   assumes sign_changes_grows:
     "\<And>L. \<exists>T>0. count_real_zeros T > sign_changes_verified L"
   and provable_RH_instance:
-    "\<lbrakk>provable riemann_hypothesis; T > 0\<rbrakk> \<Longrightarrow>
-       provable (count_real_zeros T = count_critical_strip_zeros T)"
-  and counting_requires_sign_changes':
+    "\<lbrakk>provable riemann_hypothesis; T > 0\<rbrakk>
+     \<Longrightarrow> provable (count_real_zeros T = count_critical_strip_zeros T)"
+  and counting_requires_sign_changes:
     "provable (count_real_zeros T = count_critical_strip_zeros T)
-     \<Longrightarrow> count_real_zeros T \<le> sign_changes_verified (proof_length riemann_hypothesis)"
+     \<Longrightarrow> count_real_zeros T \<le>
+         sign_changes_verified (proof_length riemann_hypothesis)"
 begin
 
 text \<open>
 
 \section{The Unprovability Argument}
 
-We now formalize the core unprovability argument.  The goal is to show that,
-under the abstract assumptions collected in the locale
-\texttt{RH\_Assumptions}, the Riemann Hypothesis cannot be provable.
+We now formalize the core unprovability argument.  The objective is to show that,
+\emph{under the abstract assumptions collected in the locale
+\texttt{RH\_Assumptions}}, the Riemann Hypothesis cannot be provable in the
+underlying proof system.
 
-The key idea is that a proof of the Riemann Hypothesis of finite length induces
-a fixed bound on how many sign changes of the Riemann--Siegel function \(Z(t)\)
-can be certified by proofs derived from it.  Since the number of real zeros of
-\(\zeta(\tfrac12 + it)\) grows unboundedly with the height \(T\), this bound is
-eventually exceeded, yielding a contradiction.
+The argument is entirely conditional and metatheoretical.  No analytic
+properties of the Riemann zeta function are used beyond the abstract assumptions
+introduced earlier.
+
+\subsection*{Idea of the Proof}
+
+The key idea is that a proof of the Riemann Hypothesis of finite length induces a
+fixed upper bound on the amount of information that can be extracted from it
+within the abstract model—specifically, on how many sign changes of the
+Riemann--Siegel function \( Z(t) \) can be certified by proofs derived from it.
+
+At the same time, the number of real zeros of
+\(\zeta\!\left(\tfrac12 + it\right)\) below height \( T \) grows without bound as
+\( T \to \infty \).  For sufficiently large \( T \), this growth exceeds the
+verification capacity associated with any fixed proof length, leading to a
+contradiction under the assumptions of the model.
 
 \subsection*{Outline of the Argument}
 
-Assume, for the sake of contradiction, that the Riemann Hypothesis is provable,
-and let
+Assume, for the sake of contradiction, that the Riemann Hypothesis is provable.
+Let
 \[
-L = \texttt{proof\_length}(\texttt{riemann\_hypothesis}).
+L = \texttt{proof\_length}(\texttt{riemann\_hypothesis})
 \]
+denote the length assigned to such a proof.
+
 By the growth assumption on real zeros, there exists a real number \( T > 0 \)
 such that
 \[
@@ -200,44 +201,44 @@ such that
 \texttt{sign\_changes\_verified}(L).
 \]
 
-By soundness of the proof system, provability of the Riemann Hypothesis implies
-its truth.  Consequently, for this value of \( T \) the instance of the
-Riemann Hypothesis at height \( T \) holds:
+We assume explicitly that provability of the Riemann Hypothesis entails
+provability of each of its numerical instances.  In particular, from the
+assumed provability of the Riemann Hypothesis and the choice of \( T \), we
+obtain provability of the corresponding instance equality
 \[
 \texttt{count\_real\_zeros}(T)
 =
 \texttt{count\_critical\_strip\_zeros}(T).
 \]
 
-We assume explicitly that a proof of the Riemann Hypothesis yields, for each
-\( T > 0 \), a proof of this corresponding instance equality.  By the
-methodological assumption captured in the locale, any proof of such an
-instance equality must be capable of supporting verification of at least
-\(\texttt{count\_real\_zeros}(T)\) sign changes of the function \( Z(t) \),
-and hence must satisfy the bound
+By the methodological assumption encoded in the locale, any proof of such an
+instance equality must support verification of at least
+\(\texttt{count\_real\_zeros}(T)\) sign changes of the function \( Z(t) \).
+Accordingly, it must satisfy the bound
 \[
 \texttt{count\_real\_zeros}(T)
 \le
 \texttt{sign\_changes\_verified}(L).
 \]
 
-This contradicts the choice of \( T \), which ensured that
+This contradicts the earlier inequality
 \[
 \texttt{count\_real\_zeros}(T)
 >
 \texttt{sign\_changes\_verified}(L).
 \]
-The contradiction shows that the original assumption was false.
 
 \subsection*{Conclusion}
 
-Under the abstract assumptions collected in the locale
-\texttt{RH\_Assumptions}, the Riemann Hypothesis is therefore not provable.
+The contradiction shows that the assumption of provability of the Riemann
+Hypothesis is incompatible with the abstract assumptions collected in the
+locale \texttt{RH\_Assumptions}.  Therefore, within this abstract framework, the
+Riemann Hypothesis is not provable.
 \<close>
 
 text \<open>Main theorem: The Riemann Hypothesis is not provable under these assumptions.\<close>
 theorem RH_unprovable:
-  shows "¬ provable riemann_hypothesis"
+  shows "\<not> provable riemann_hypothesis"
 proof
   assume prh: "provable riemann_hypothesis"
 
@@ -251,7 +252,7 @@ proof
     using provable_RH_instance[OF prh T_pos] .
 
   have upper: "count_real_zeros T \<le> sign_changes_verified ?L"
-    using counting_requires_sign_changes'[OF pr_counts] by simp
+    using counting_requires_sign_changes[OF pr_counts] by simp
 
   show False
     using T_large upper by linarith
