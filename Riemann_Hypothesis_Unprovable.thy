@@ -59,8 +59,9 @@ In particular, the theory introduces:
 \begin{itemize}
   \item an abstract notion of provability,
   \item an abstract proof-length measure,
-  \item and an abstract bound on how many sign changes of $Z(t)$ can be verified
-        by proofs of bounded length.
+  \item and an abstract bound on how many locally verifiable events (such as sign 
+        changes of the Riemann–Siegel function \(Z(t)\) in the motivating argument) 
+        can be certified by proofs of bounded length.
 \end{itemize}
 
 Under these assumptions, the main result shows that the Riemann Hypothesis is
@@ -104,14 +105,19 @@ or the equation is reduced to a closed form whose solutions can be enumerated
 arithmetically.  A classical example of the latter is the reduction of
 \(\sin z = 0\) to the explicit solution set \(z = n\pi\).
 
-The informal argument outlined above begins from the observation that, to date,
-no non-circular closed-form reduction is known for the critical-line equation
+The motivating informal argument takes the view that, so far, no closed-form
+reduction has been found for the critical-line equation
 \[
   \zeta\!\left(\tfrac12 + it\right) = 0
 \]
-that provides an explicit description of all its real solutions.  In particular,
-no explicit formula is currently known for the real zeros \(t\) of
-\(\zeta(\tfrac12 + it)\) beyond the defining equation itself.
+that would yield an explicit description of all its real solutions.  In that
+methodological picture, establishing an \emph{exact} count
+\[
+  \texttt{count\_real\_zeros}(T) = n
+\]
+is therefore treated as requiring local certification effort that scales with
+\(n\), for instance by checking \(n\) distinct sign-change events of an auxiliary
+real function (such as the Riemann--Siegel function \(Z(t)\)).
 
 In the absence of such a reduction, any proof that establishes an \emph{exact}
 equality
@@ -170,10 +176,10 @@ introduced earlier.
 
 \subsection*{Idea of the Proof}
 
-The key idea is that a proof of the Riemann Hypothesis of finite length induces a
-fixed upper bound on the amount of information that can be extracted from it
-within the abstract model—specifically, on how many sign changes of the
-Riemann--Siegel function \( Z(t) \) can be certified by proofs derived from it.
+The key idea is that, within the abstract model, proofs of bounded length are
+assumed to be capable of certifying only a bounded number of local verification
+events.  In the present setting, these events are interpreted as sign changes of
+the Riemann--Siegel function \( Z(t) \).
 
 At the same time, the number of real zeros of
 \(\zeta\!\left(\tfrac12 + it\right)\) below height \( T \) grows without bound as
