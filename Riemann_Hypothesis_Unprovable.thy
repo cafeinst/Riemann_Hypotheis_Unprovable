@@ -42,11 +42,9 @@ formal proofs are able to establish, the Riemann Hypothesis cannot be proven.
 The core idea is based on the following observations:
 
 \begin{itemize}
-  \item Exact counting of critical-line zeros appears to require
-        verification of sign changes of the Riemann--Siegel function \(Z(t)\).
-  \item Any proof of finite length can verify only finitely many such sign changes.
-  \item The number of zeros of \(\zeta(\tfrac12 + it)\) below height \(T\)
-        grows without bound as \(T \to \infty\).
+  \item Exact critical-line zero counts appear to require local verification.
+  \item Proofs of bounded length can verify only boundedly many such facts.
+  \item The number of critical-line zeros grows without bound.
 \end{itemize}
 
 This tension suggests that a finite proof cannot establish the correctness of
@@ -112,9 +110,9 @@ no non-circular closed-form reduction is known for the critical-line equation
 \[
   \zeta\!\left(\tfrac12 + it\right) = 0
 \]
-that would yield an explicit description of all its real solutions.  Beyond the
-defining equation itself, no explicit formula has been found for the real zeros
-\(t\) of \(\zeta(\tfrac12 + it)\).
+that provides an explicit description of all its real solutions.  In particular,
+no explicit formula is currently known for the real zeros \(t\) of
+\(\zeta(\tfrac12 + it)\) beyond the defining equation itself.
 
 In the absence of such a reduction, any proof that establishes an \emph{exact}
 equality
@@ -230,10 +228,8 @@ This contradicts the earlier inequality
 
 \subsection*{Conclusion}
 
-The contradiction shows that the assumption of provability of the Riemann
-Hypothesis is incompatible with the abstract assumptions collected in the
-locale \texttt{RH\_Assumptions}.  Therefore, within this abstract framework, the
-Riemann Hypothesis is not provable.
+The resulting contradiction shows that, under the assumptions of the locale, 
+the Riemann Hypothesis is not provable.
 \<close>
 
 text \<open>Main theorem: The Riemann Hypothesis is not provable under these assumptions.\<close>
