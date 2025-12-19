@@ -52,8 +52,7 @@ the Riemann Hypothesis for arbitrarily large heights.
 
 \subsection{Formalization Strategy}
 
-This Isabelle/HOL development does not attempt to formalize analytic number
-theory.  Instead, it isolates the structural metatheoretical assumptions
+This Isabelle/HOL development isolates the structural metatheoretical assumptions
 implicit in the above reasoning.
 
 In particular, the theory introduces:
