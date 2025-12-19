@@ -78,10 +78,9 @@ at a purely metatheoretical level.
 
 text \<open>
 Rather than defining zero counts analytically, we introduce them as abstract
-functions.  The intention is that count_real_zeros T represents the number of
-zeros of zeta(1/2 + i t) with 0 < t < T, while count_critical_strip_zeros T
-represents the number of zeros of zeta(s) in the critical strip with
-0 < Im(s) < T.
+functions.  The intention is that \texttt{count\_real\_zeros}~T represents the number of
+zeros of zeta(1/2 + i t) with 0 < t < T, while \texttt{count\_critical\_strip\_zeros}~T 
+represents the number of zeros of zeta(s) in the critical strip with 0 < Im(s) < T.
 \<close>
 
 consts count_real_zeros :: "real \<Rightarrow> nat"
@@ -99,51 +98,45 @@ definition riemann_hypothesis :: bool where
 section \<open>Key Assumption About Counting Zeros\<close>
 
 text \<open>
-Mathematical proofs that count solutions to equations typically proceed in one
-of two ways.  Either solutions are verified individually using local criteria,
-or the equation is reduced to a closed form whose solutions can be enumerated
-arithmetically.  A classical example of the latter is the reduction of
-\(\sin z = 0\) to the explicit solution set \(z = n\pi\).
+Mathematical arguments that establish *exact* counts of solutions typically rely
+on either (i) local verification of individual solution events, or (ii) a
+reduction to a closed-form description from which solutions can be enumerated.
+A familiar example of (ii) is the reduction of \(\sin z = 0\) to the explicit
+solution set \(z = n\pi\).
 
-The motivating informal argument takes the view that, so far, no closed-form
-reduction has been found for the critical-line equation
+The motivating informal argument assumes that no such closed-form
+description is presently available for the critical-line equation
 \[
-  \zeta\!\left(\tfrac12 + it\right) = 0
+  \zeta\!\left(\tfrac12 + it\right) = 0,
 \]
-that would yield an explicit description of all its real solutions.  In that
-methodological picture, establishing an \emph{exact} count
-\[
-  \texttt{count\_real\_zeros}(T) = n
-\]
-is therefore treated as requiring local certification effort that scales with
-\(n\), for instance by checking \(n\) distinct sign-change events of an auxiliary
-real function (such as the Riemann--Siegel function \(Z(t)\)).
-
-In the absence of such a reduction, any proof that establishes an \emph{exact}
-equality
+in the sense of yielding an explicit characterization of all real solutions \(t\).
+Under this methodological viewpoint, proving an exact identity
 \[
   \texttt{count\_real\_zeros}(T) = n
 \]
-must, in effect, account for the existence of those \(n\) zeros using local
-information about the Riemann--Siegel function \(Z(t)\), for example by verifying
-\(n\) distinct sign changes on the interval \((0,T)\).
+is treated as requiring certification work that scales with \(n\).  One concrete
+proxy for this work is the verification of \(n\) distinct sign-change events of
+an auxiliary real function, such as the Riemann--Siegel function \(Z(t)\), on the
+interval \((0,T)\).
 
-Although the argument principle yields a formula for counting zeros in the
-critical strip, using this formula to count critical-line zeros in order to
-\emph{prove} the Riemann Hypothesis would be circular, since it already
-presupposes that all strip zeros lie on the critical line.
+By contrast, while the argument principle provides a way to count zeros in the
+critical strip, using strip-counting information to *derive* exact critical-line
+counts in a proof of RH would be methodologically circular: it would amount to
+assuming, in effect, that all strip zeros are already on the line.
 
-Accordingly, we adopt the methodological stance that, in the absence of a
-non-circular closed-form reduction, any proof of an exact critical-line zero
-count must support verification of the corresponding number of sign changes of
-\(Z(t)\).  This principle is encoded below as an abstract assumption relating
-proof length to sign-change verification capacity.
+Accordingly, we assume a *global proof-length budget*
+\(L = \texttt{proof\_length}(\texttt{riemann\_hypothesis})\).
+Any provable instance equality
+\(\texttt{count\_real\_zeros}(T) = \texttt{count\_critical\_strip\_zeros}(T)\)
+is then required to satisfy
+\(\texttt{count\_real\_zeros}(T) \le \texttt{sign\_changes\_verified}(L)\),
+meaning that the proof of RH can certify only \(\texttt{sign\_changes\_verified}(L)\)
+many local sign-change events within this global budget.
 
-The following locale does not attempt to capture provability in any standard
-formal system such as ZFC or Peano Arithmetic.  Instead, it axiomatizes a
-restricted notion of provability that reflects the methodological constraints
-described above.  The resulting non-provability statement is therefore purely
-conditional.
+The locale below does not model provability in any specific foundational system
+(e.g. ZFC or PA).  It instead axiomatizes a restricted notion of provability that
+captures precisely the above methodological constraints.  The resulting
+non-provability statement is therefore purely conditional.
 \<close>
 
 locale RH_Assumptions =
