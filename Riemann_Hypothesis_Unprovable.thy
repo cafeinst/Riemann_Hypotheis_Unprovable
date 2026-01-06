@@ -98,45 +98,69 @@ definition riemann_hypothesis :: bool where
 section \<open>Key Assumption About Counting Zeros\<close>
 
 text \<open>
-Mathematical arguments that establish *exact* counts of solutions typically rely
-on either (i) local verification of individual solution events, or (ii) a
-reduction to a closed-form description from which solutions can be enumerated.
-A familiar example of (ii) is the reduction of \(\sin z = 0\) to the explicit
-solution set \(z = n\pi\).
+This development rests on a methodological assumption concerning how exact
+solution counts can be established within a formal proof system.
 
-The motivating informal argument assumes that no such closed-form
-description is presently available for the critical-line equation
+In general, mathematical arguments that determine *exact* numbers of solutions
+to an equation proceed in one of two ways:
+\begin{itemize}
+  \item by local certification of individual solution events, or
+  \item by reduction to a closed-form description from which all solutions can
+        be enumerated.
+\end{itemize}
+
+A standard example of the latter is the equation \( \sin z = 0 \), whose solution
+set is explicitly characterized by \( z = n\pi \).
+
+The motivating informal argument assumes that no analogous closed-form
+description can be derived from the critical-line equation
 \[
   \zeta\!\left(\tfrac12 + it\right) = 0,
 \]
-in the sense of yielding an explicit characterization of all real solutions \(t\).
-Under this methodological viewpoint, proving an exact identity
+in the sense of yielding an explicit characterization of all real solutions
+\( t \).  This assumption is not asserted as an analytic fact about the zeta
+function, but is adopted as a methodological constraint on the kinds of global
+inferences permitted in the proof model.
+
+Under this viewpoint, establishing an exact identity
 \[
   \texttt{count\_real\_zeros}(T) = n
 \]
-is treated as requiring certification work that scales with \(n\).  One concrete
-proxy for this work is the verification of \(n\) distinct sign-change events of
-an auxiliary real function, such as the Riemann--Siegel function \(Z(t)\), on the
-interval \((0,T)\).
+is treated as requiring certification effort that scales with \( n \).
+One concrete proxy for this effort is the verification of \( n \) distinct local
+events, such as sign changes of an auxiliary real function (e.g.\ the
+Riemann--Siegel function \( Z(t) \)) on the interval \( (0,T) \).
 
-By contrast, while the argument principle provides a way to count zeros in the
-critical strip, using strip-counting information to *derive* exact critical-line
-counts in a proof of RH would be methodologically circular: it would amount to
-assuming, in effect, that all strip zeros are already on the line.
+While the argument principle provides a method for counting zeros in the
+critical strip, using strip-counting information to *derive* exact
+critical-line counts in a proof of the Riemann Hypothesis would be
+methodologically circular within this framework, as it would effectively
+presuppose that all strip zeros lie on the critical line.
 
-Accordingly, we assume a *global proof-length budget*
-\(L = \texttt{proof\_length}(\texttt{riemann\_hypothesis})\).
+Accordingly, we assume the existence of a global proof-length budget
+\[
+  L = \texttt{proof\_length}(\texttt{riemann\_hypothesis}).
+\]
 Any provable instance equality
-\(\texttt{count\_real\_zeros}(T) = \texttt{count\_critical\_strip\_zeros}(T)\)
-is then required to satisfy
-\(\texttt{count\_real\_zeros}(T) \le \texttt{sign\_changes\_verified}(L)\),
-meaning that the proof of RH can certify only \(\texttt{sign\_changes\_verified}(L)\)
-many local sign-change events within this global budget.
+\[
+  \texttt{count\_real\_zeros}(T)
+  =
+  \texttt{count\_critical\_strip\_zeros}(T)
+\]
+is then required to satisfy the bound
+\[
+  \texttt{count\_real\_zeros}(T)
+  \le
+  \texttt{sign\_changes\_verified}(L),
+\]
+meaning that a proof of the Riemann Hypothesis can certify only
+\texttt{sign\_changes\_verified}(L) many local verification events within this
+global budget.
 
 The locale below does not model provability in any specific foundational system
-(e.g. ZFC or PA).  It instead axiomatizes a restricted notion of provability that
-captures precisely the above methodological constraints.  The resulting
-non-provability statement is therefore purely conditional.
+(e.g.\ ZFC or PA).  Instead, it axiomatizes an abstract notion of provability
+designed to capture precisely the above methodological constraints.  The
+resulting non-provability statement is therefore purely conditional.
 \<close>
 
 locale RH_Assumptions =
